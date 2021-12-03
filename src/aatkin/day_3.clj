@@ -15,19 +15,19 @@
      (count coll)))
 
 (defn- most-common-bit [avg]
-  (if (< 0.5 avg) 1 0))
+  (if (<= 0.5 avg) 1 0))
 
 (defn- least-common-bit [avg]
-  (if (< 0.5 avg) 0 1))
+  (if (<= 0.5 avg) 0 1))
 
 (defn- gamma-rate [coll]
-  (->> [0 1 2 3 4]
+  (->> (range (count (first coll)))
        (map #(get-nth-bits coll %))
        (map find-bit-average)
        (map most-common-bit)))
 
 (defn- epsilon-rate [coll]
-  (->> [0 1 2 3 4]
+  (->> (range (count (first coll)))
        (map #(get-nth-bits coll %))
        (map find-bit-average)
        (map least-common-bit)))
@@ -41,9 +41,47 @@
        (apply *)))
 
 (comment
-  (parse mock-input)
+  (def coll (parse mock-input))
+  (gamma-rate coll)
 
   (->> ((juxt gamma-rate epsilon-rate) (parse mock-input))
        (map to-integer)
        (apply *))
+  
+  (part-1-solution)
   )
+
+(defn- by-val-and-pos [coll pos n]
+  (filter #(= n (Character/digit (nth % pos) 10)) coll))
+
+(defn- oxygen-generator-rating [coll]
+  (let [bits (count (first coll))]
+    (loop [coll coll
+           pos 0]
+      (if (or (> pos bits)
+              (> (count coll) 1))
+        (recur (by-val-and-pos coll pos (nth (gamma-rate coll) pos))
+               (inc pos))
+        (first coll)))))
+
+(defn- co2-scrubber-rating [coll]
+  (let [bits (count (first coll))]
+    (loop [coll coll
+           pos 0]
+      (if (or (> pos bits)
+              (> (count coll) 1))
+        (recur (by-val-and-pos coll pos (nth (epsilon-rate coll) pos))
+               (inc pos))
+        (first coll)))))
+
+(comment
+  (def coll (parse mock-input))
+
+  coll
+  (gamma-rate coll)
+  (by-val-and-pos coll 0 1)
+
+  ()
+
+  (oxygen-generator-rating coll)
+  (co2-scrubber-rating coll))
