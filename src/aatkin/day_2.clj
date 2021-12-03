@@ -9,12 +9,12 @@
        (map #(s/split % #" "))
        (map (fn [[type value]] [type (Integer/parseInt value)]))))
 
-(defn horizontal-pos? [[type]]
+(defn- horizontal-pos? [[type]]
   (= "forward" type))
-(defn depth-value [[type n]]
+(defn- depth-value [[type n]]
   (if (= "up" type) (- n) n))
 
-(defn get-final-position [input]
+(defn- get-final-position [input]
   (let [horizontals (map second (filter horizontal-pos? input))
         depths (map depth-value (remove horizontal-pos? input))]
     (* (apply + horizontals)
@@ -29,21 +29,21 @@
   (get-final-position (parse input))
   )
 
-(defn calculate-aim [[type n]]
+(defn- calculate-aim [[type n]]
   (condp = type
     "down" n
     "up" (- n)
     0))
 
-(defn calculate-horizontal [[type n]]
+(defn- calculate-horizontal [[type n]]
   (if (= type "forward")
     n 0))
 
-(defn calculate-depth [[type n] aim]
+(defn- calculate-depth [[type n] aim]
   (if (= type "forward")
      (* n aim) 0))
 
-(defn get-final-position-corrected [values]
+(defn- get-final-position-corrected [values]
   (loop [values values
          aim 0
          horizontal 0
@@ -54,6 +54,9 @@
              (+ horizontal (calculate-horizontal current))
              (+ depth (calculate-depth current aim)))
       (* horizontal depth))))
+
+(defn part-2-solution []
+  (get-final-position-corrected (parse input)))
 
 (comment
   (parse mock-input)
