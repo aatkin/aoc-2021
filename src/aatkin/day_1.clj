@@ -1,8 +1,8 @@
 (ns aatkin.day-1
   (:require [clojure.string :as s]))
 
-(def ^:private input (slurp "resources/input/day_1_input"))
-(def ^:private mock-input (slurp "resources/mock_input/day_1_mock_input"))
+(def ^:private input (slurp "resources/input/day_1"))
+(def ^:private mock-input (slurp "resources/mock_input/day_1"))
 
 (defn- parse [input]
   (->> (s/split-lines input)
