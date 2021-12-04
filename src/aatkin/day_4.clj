@@ -35,7 +35,7 @@
     (-> (map mark-row table)
         (with-meta {:marked-columns marked-columns}))))
 
-(defn- row-bingo [row]
+(defn- row-bingo? [row]
   (= (count row)
      (count (:marked (meta row)))))
 
@@ -46,10 +46,10 @@
     (difference (set all-vals) marked)))
 
 (defn- bingo-value [n table]
-  (let [rows (map row-bingo table)
-        cols (map row-bingo (:marked-columns (meta table)))
+  (let [rows (map row-bingo? table)
+        cols (map row-bingo? (:marked-columns (meta table)))
         found (->> (into rows cols)
-                   (filter some?)
+                   (filter true?)
                    first)]
     (when found
       (* (apply + (get-unmarked table)) n))))
