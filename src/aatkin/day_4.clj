@@ -49,9 +49,8 @@
   (let [rows (map row-bingo? table)
         cols (map row-bingo? (:marked-columns (meta table)))
         found (->> (into rows cols)
-                   (filter true?)
-                   first)]
-    (when found
+                   (filter true?))]
+    (when (seq found)
       (* (apply + (get-unmarked table)) n))))
 
 (defn- find-bingo [draw-numbers tables]
@@ -90,8 +89,6 @@
   (def data (parse mock-input))
 
   (apply find-bingo (parse mock-input))
-
-  (apply find-bingo (parse input))
 
   (apply find-last-bingo (parse mock-input))
 
