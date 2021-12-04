@@ -36,9 +36,8 @@
         (with-meta {:marked-columns marked-columns}))))
 
 (defn- row-bingo [row]
-  (let [marked (:marked (meta row))
-        bingo? (= (count row) (count marked))]
-    (when bingo? row)))
+  (= (count row)
+     (count (:marked (meta row)))))
 
 (defn- get-unmarked [table]
   (let [all-vals (flatten table)
