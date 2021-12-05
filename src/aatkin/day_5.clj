@@ -23,27 +23,24 @@
     (range from (dec to) -1)
     (range from (inc to))))
 
-(defn- plot-range-diagonal [[from-x to-x] [from-y to-y]]
-  (->> (interleave (plot-range from-x to-x)
-                   (plot-range from-y to-y))
+(defn- plot-range-diagonal [[x1 x2] [y1 y2]]
+  (->> (interleave (plot-range x1 x2)
+                   (plot-range y1 y2))
        (partition 2)))
 
-(defn- plot-path [[[from-x from-y] [to-x to-y]]]
-  (if (= from-x to-x) ;; x1 = x2
-    (map #(list from-x %) (plot-range from-y to-y))
-    (if (= from-y to-y) ;; y1 = y2
-      (map #(list % from-y) (plot-range from-x to-x))
-      (map #(list (first %) (second %)) ;; diagonal
-           (plot-range-diagonal [from-x to-x] [from-y to-y])))))
+(defn- plot-path [[[x1 y1] [x2 y2]]]
+  (if (= x1 x2)
+    (map #(list x1 %) (plot-range y1 y2))
+    (if (= y1 y2)
+      (map #(list % y1) (plot-range x1 x2))
+      (map #(list (first %) (second %)) (plot-range-diagonal [x1 x2] [y1 y2])))))
 
 (defn- plot-paths [data]
   (loop [data data
          paths {}]
     (if (seq data)
       (recur (rest data)
-             (reduce (fn [m coord-point]
-                       (assoc m coord-point
-                              (inc (get m coord-point 0))))
+             (reduce (fn [m coord] (assoc m coord (inc (get m coord 0))))
                      paths
                      (plot-path (first data))))
       paths)))
