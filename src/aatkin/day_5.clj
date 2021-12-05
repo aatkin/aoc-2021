@@ -4,24 +4,19 @@
 (def ^:private input (slurp "resources/input/day_5"))
 (def ^:private mock-input (slurp "resources/mock_input/day_5"))
 
-(defn- parse-coords [s]
+(defn- parse-coord [s]
   (let [[x y] (s/split s #",")]
     [(Integer/parseInt x 10) (Integer/parseInt y 10)]))
 
-(defn- parse-part-1 [input]
-  (->> (s/split-lines input)
+(defn- parse-coords [in]
+  (->> (s/split-lines in)
        (map #(s/split % #" -> "))
        (map (fn [[from to]]
-              [(parse-coords from) (parse-coords to)]))
-       (filter (fn [[from to]]
-                 (or (= (first from) (first to))
-                     (= (second from) (second to)))))))
+              [(parse-coord from) (parse-coord to)]))))
 
-(defn- parse-part-2 [input]
-  (->> (s/split-lines input)
-       (map #(s/split % #" -> "))
-       (map (fn [[from to]]
-              [(parse-coords from) (parse-coords to)]))))
+(defn- not-diagonal? [[from to]]
+  (or (= (first from) (first to))
+      (= (second from) (second to))))
 
 (defn- plot-range [from to]
   (if (< to from)
@@ -54,13 +49,14 @@
       paths)))
 
 (defn part-1-solution []
-  (->> (parse-part-1 input) ;; ignore diagonal paths
+  (->> (parse-coords input)
+       (filter not-diagonal?)
        plot-paths
        (filter #(> (second %) 1))
        count))
 
 (defn part-2-solution []
-  (->> (parse-part-2 input) ;; include diagonal paths
+  (->> (parse-coords input)
        plot-paths
        (filter #(> (second %) 1))
        count))
