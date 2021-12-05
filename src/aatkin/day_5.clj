@@ -46,8 +46,9 @@
          paths {}]
     (if (seq data)
       (recur (rest data)
-             (reduce (fn [coll path]
-                       (assoc coll path (inc (get coll path 0))))
+             (reduce (fn [m coord-point]
+                       (assoc m coord-point
+                              (inc (get m coord-point 0))))
                      paths
                      (plot-path (first data))))
       paths)))
