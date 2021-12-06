@@ -57,11 +57,3 @@
        plot-paths
        (filter #(> (second %) 1))
        count))
-
-(comment
-  (plot-range-diagonal [1 1] [3 3])
-
-  (part-1-solution)
-
-  (part-2-solution)
-  )

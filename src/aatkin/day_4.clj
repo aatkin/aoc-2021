@@ -84,14 +84,3 @@
 
 (defn part-2-solution []
   (apply find-last-bingo (parse input)))
-
-(comment
-  (def data (parse mock-input))
-
-  (apply find-bingo (parse mock-input))
-
-  (apply find-last-bingo (parse mock-input))
-
-  (part-1-solution)
-
-  (part-2-solution))

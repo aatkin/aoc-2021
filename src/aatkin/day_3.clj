@@ -37,14 +37,6 @@
        (map (comp bin-to-int s/join))
        (apply *)))
 
-(comment
-  (->> ((juxt gamma-rate epsilon-rate) (parse mock-input))
-       (map (comp bin-to-int s/join))
-       (apply *))
-  
-  (part-1-solution)
-  )
-
 (defn- by-val-and-pos [coll pos n]
   (filter #(= n (char-to-int (nth % pos))) coll))
 
@@ -64,11 +56,3 @@
   (->> ((juxt oxygen-generator-rating co2-scrubber-rating) (parse input))
        (map (comp bin-to-int s/join))
        (apply *)))
-
-(comment
-  (->> ((juxt oxygen-generator-rating co2-scrubber-rating) (parse mock-input))
-       (map (comp bin-to-int s/join))
-       (apply *))
-
-  (part-2-solution)
-  )

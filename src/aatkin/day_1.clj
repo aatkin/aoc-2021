@@ -14,10 +14,6 @@
        (filter true?)
        count))
 
-(comment
-  (measurement-diffs (parse input))
-  (measurement-diffs (parse mock-input)))
-
 (defn part-1-solution []
   (measurement-diffs (parse input)))
 
@@ -25,10 +21,6 @@
   (->> (partition 3 1 data)
        (map (partial apply +))
        measurement-diffs))
-
-(comment
-  (sliding-window-diffs (parse mock-input))
-  (sliding-window-diffs (parse input)))
 
 (defn part-2-solution []
   (sliding-window-diffs (parse input)))

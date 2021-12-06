@@ -23,12 +23,6 @@
 (defn part-1-solution []
   (get-final-position (parse input)))
 
-(comment
-  (parse mock-input)
-  (get-final-position (parse mock-input))
-  (get-final-position (parse input))
-  )
-
 (defn- calculate-aim [[type n]]
   (condp = type
     "down" n
@@ -57,9 +51,3 @@
 
 (defn part-2-solution []
   (get-final-position-corrected (parse input)))
-
-(comment
-  (parse mock-input)
-  (get-final-position-corrected (parse mock-input))
-  (get-final-position-corrected (parse input))
-  )

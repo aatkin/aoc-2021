@@ -33,22 +33,8 @@
                    vals)]
     (apply + fishes)))
 
-(comment
-  mock-input
-
-  (parse mock-input)
-
-  (get 3 (frequencies (parse mock-input)))
-
-  (part-1-solution)
-  )
-
 (defn part-2-solution []
   (let [fishes (-> (parse input)
                    (evolve 256)
                    vals)]
     (apply + fishes)))
-
-(comment
-  (part-2-solution)
-  )
