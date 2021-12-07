@@ -10,7 +10,7 @@
        (map #(Integer/parseInt % 10))))
 
 (defn- distance [a b]
-  (abs (- a b)))
+  (abs (- a b))) ;; Math/abs throws on fractions
 
 (defn- median [coll]
   (let [idx (Math/floor (/ (count coll) 2))]
@@ -22,21 +22,15 @@
        (apply +)))
 
 (defn part-1-solution []
-  (->> (parse input)
-       least-fuel))
+  (least-fuel (parse input)))
 
-(defn- avg [data]
-  (/ (apply + data)
-     (count data)))
-
-(defn- sum-up-to [n]
-  (->> (range 1 (+ n 1))
-       (apply +)))
+(defn- mean [coll]
+  (/ (apply + coll) (count coll)))
 
 (defn- least-fuel-by [data rounding-fn]
   (->> data
-       (map (partial distance (rounding-fn (avg data))))
-       (map sum-up-to)
+       (map (partial distance (rounding-fn (mean data))))
+       (map #(apply + (range (+ % 1))))
        (apply +)))
 
 (defn part-2-solution []
