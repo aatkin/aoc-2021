@@ -58,6 +58,7 @@
                   (take-one coll {:n 9 :filter-fn (partial codes-by-len 6)})
                   (decode-n coll {:n 3 :with-mask 9 :eq 9})
                   (take-one coll {:n 2}))]
+    ;; swap keys <-> values
     (reduce-kv #(assoc %1 (s/join (sort %3)) %2) {} known)))
 
 (defn- decode [[codes digits]]
