@@ -29,50 +29,40 @@
 (defn- mask [s1 s2]
   (union (set s1) (set s2)))
 
-(defn- matches? [s1 s2]
-  (fn [s3] (= (mask s1 s3) (set s2))))
+(defn- decode-n [known coll {:keys [n with-mask eq filter-fn]}]
+  (let [filter-fn (or filter-fn identity)]
+    (->> (difference (set coll) (set (vals known))) ;; remove known codes
+         filter-fn ;; optional filtering (e.g. only 6 len codes)
+         (filter #(= (mask (get known with-mask) %)
+                     (set (get known eq))))
+         first
+         (assoc known n))))
 
-(defn- find-match [coll s1 s2]
-  (first (filter (matches? s1 s2) coll)))
+(defn- take-one [known coll {:keys [n filter-fn]}]
+  (let [filter-fn (or filter-fn identity)]
+    (assoc known n (->> (difference (set coll) (set (vals known)))
+                        filter-fn
+                        first))))
 
 (defn- codes-by-len [n coll]
   (filter #(= n (count %)) coll))
 
-(defn- without-known [coll known]
-  (difference (set coll) (set (vals known))))
-
-(defn- set-match! [known n coll s1 s2]
-  (when-let [match (find-match (without-known coll @known) s1 s2)]
-    (reset! known (assoc @known n match))))
-
-(defn- sort-str [s]
-  (s/join (sort s)))
-
-(defn- find-known [coll]
-  (let [known (atom {1 (first (codes-by-len 2 coll))
-                     4 (first (codes-by-len 4 coll))
-                     7 (first (codes-by-len 3 coll))
-                     8 (first (codes-by-len 7 coll))})]
-    ;; 1 & 6 = 8
-    (set-match! known 6 coll (get @known 1) (get @known 8))
-    ;; 0 & 4 = 8
-    (set-match! known 0 (codes-by-len 6 coll) (get @known 4) (get @known 8))
-    ;; 5 & 6 = 6
-    (set-match! known 5 coll (get @known 6) (get @known 6))
-    ;; only 9 left out of all 6 len codes
-    (reset! known (assoc @known 9 (first (without-known (codes-by-len 6 coll) @known))))
-    ;; only 2 and 3 left, 3 & 9 = 9
-    (set-match! known 3 coll (get @known 9) (get @known 9))
-    ;; last match left
-    (reset! known (assoc @known 2 (first (without-known coll @known))))
-
-    ;; vals to keys
-    (reduce-kv #(assoc %1 (sort-str %3) %2) {} @known)))
+(defn- decode-known [coll]
+  (let [known (-> {1 (first (codes-by-len 2 coll))
+                   4 (first (codes-by-len 4 coll))
+                   7 (first (codes-by-len 3 coll))
+                   8 (first (codes-by-len 7 coll))}
+                  (decode-n coll {:n 6 :with-mask 1 :eq 8})
+                  (decode-n coll {:n 0 :with-mask 4 :eq 8 :filter-fn (partial codes-by-len 6)})
+                  (decode-n coll {:n 5 :with-mask 6 :eq 6})
+                  (take-one coll {:n 9 :filter-fn (partial codes-by-len 6)})
+                  (decode-n coll {:n 3 :with-mask 9 :eq 9})
+                  (take-one coll {:n 2}))]
+    (reduce-kv #(assoc %1 (s/join (sort %3)) %2) {} known)))
 
 (defn- decode [[codes digits]]
-  (let [known (find-known codes)]
-    (map (fn [code]
-           (get known (sort-str code))) digits)))
+  (let [known (decode-known codes)]
+    (map #(get known (s/join (sort %))) digits)))
 
 (defn- to-int [decoded]
   (Integer/parseInt (s/join decoded) 10))
